@@ -1,3 +1,6 @@
+use sliding_windows::IterExt;
+use sliding_windows::Storage;
+
 fn main() {
     println!("Advent of Code 2021: Day 1, Puzzle 1");
 
@@ -2002,20 +2005,52 @@ fn main() {
     9893
     9899";
 
-    let result = count(input);
-    println!("Result: {}", result);
+    let result = count_increases(input);
+    println!("result 1: {}", result);
+
+    let result2 = count_sliding_window(input, 3);
+    println!("result 2: {}", result2);
 }
 
-fn count(readings: &str) -> u16 {
+fn count_increases(readings: &str) -> u16 {
     let mut count = 0;
     let mut prev = u16::MAX;
     for line in readings.lines() {
         println!("{}", line);
 
-        let current = match line.trim().parse::<u16>() {
+        let current = match str_to_int(line) {
             Ok(val) => val,
             Err(_) => continue,
         };
+
+        if current > prev {
+            count += 1;
+        }
+        prev = current;
+    }
+
+    count
+}
+
+fn str_to_int(s: &str) -> Result<u16, std::num::ParseIntError> {
+    s.trim().parse::<u16>()
+}
+
+fn count_sliding_window(readings: &str, window_size: usize) -> u16 {
+    let mut storage: Storage<&str> = Storage::new(window_size);
+    let windowed_iter = readings.lines().into_iter().sliding_windows(&mut storage);
+    let output: Vec<u16> = windowed_iter
+        .map(|x| x.iter().map(|&x| str_to_int(x).unwrap_or(0)).sum())
+        .collect();
+
+    count_vec_increases(output)
+}
+
+fn count_vec_increases(v: Vec<u16>) -> u16 {
+    let mut count = 0;
+    let mut prev = u16::MAX;
+    for current in v {
+        println!("{}", current);
 
         if current > prev {
             count += 1;
@@ -2034,15 +2069,15 @@ mod tests {
     fn test_count_increases() {
         let input1 = "1
         1";
-        assert!(count(input1) == 0);
+        assert!(count_increases(input1) == 0);
 
         let input2 = "1
         0";
-        assert!(count(input2) == 0);
+        assert!(count_increases(input2) == 0);
 
         let input3 = "1
         2";
-        assert!(count(input3) == 1);
+        assert!(count_increases(input3) == 1);
 
         let input4 = "
         155
@@ -2051,6 +2086,21 @@ mod tests {
         172
         170
         ";
-        assert!(count(input4) == 2);
+        assert!(count_increases(input4) == 2);
+    }
+
+    #[test]
+    fn test_count_sliding_window() {
+        let input1 = "199
+            200
+            208
+            210
+            200
+            207
+            240
+            269
+            260
+            263";
+        assert!(count_sliding_window(input1, 3) == 5);
     }
 }

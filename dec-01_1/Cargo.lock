@@ -5,3 +5,12 @@ version = 3
 [[package]]
 name = "dec-01_1"
 version = "0.1.0"
+dependencies = [
+ "sliding_windows",
+]
+
+[[package]]
+name = "sliding_windows"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a830e5d74dce35884bac85ecdc68c1ae96b9451918cc484f39340049c7a55f5e"
