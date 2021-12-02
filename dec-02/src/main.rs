@@ -1019,8 +1019,8 @@ fn main() {
 
 #[derive(Debug)]
 struct Position {
-    x: u16,
-    y: u32,
+    x: u16, // horizontal position
+    y: u32, // depth
     aim: u16,
 }
 
