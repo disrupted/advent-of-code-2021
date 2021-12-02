@@ -1020,7 +1020,7 @@ fn main() {
 #[derive(Debug)]
 struct Position {
     x: u16,
-    y: u16,
+    y: u32,
     aim: u16,
 }
 
@@ -1037,7 +1037,7 @@ fn dive(mut submarine: Position, command: &str) -> Position {
     match split[0] {
         "forward" => {
             submarine.x += amount;
-            submarine.y += submarine.aim * amount;
+            submarine.y += submarine.aim as u32 * amount as u32;
         }
         "down" => submarine.aim += amount,
         "up" => submarine.aim -= amount,
