@@ -8,16 +8,28 @@ fn str_to_int(s: &str) -> Result<u16, std::num::ParseIntError> {
     s.trim().parse()
 }
 
+#[derive(Debug)]
 struct Point {
     x: u16,
     y: u16,
 }
 
-fn parse_coord(input: &str) -> Vec<u16> {
-    return input
+#[derive(Debug)]
+struct Line {
+    start: Point,
+    end: Point,
+}
+
+fn parse_coord(input: &str) -> Point {
+    let coords = input
         .split(',')
         .map(|s| str_to_int(s).unwrap())
         .collect::<Vec<u16>>();
+
+    Point {
+        x: coords[0],
+        y: coords[1],
+    }
 }
 
 fn create_diagram(input: &str) -> &str {
@@ -30,7 +42,9 @@ fn create_diagram(input: &str) -> &str {
         let start = parse_coord(coords[0]);
         let end = parse_coord(coords[1]);
 
-        println!("start: {:?}, end: {:?}", start, end);
+        let line = Line { start, end };
+
+        println!("{:?}", line);
     }
 
     ""
