@@ -40,9 +40,11 @@ fn create_diagram(input: &str) -> &str {
     let mut diagram = vec![0; dimensions.0 * dimensions.1];
 
     for vent in vents {
-        let idx = vent.start.x * dimensions.0 as u16 + vent.start.y;
-        println!("{}", idx);
-        diagram[idx as usize] = 1;
+        for point in vec![vent.start, vent.end] {
+            let idx = point.x * dimensions.0 as u16 + point.y;
+            println!("{}", idx);
+            diagram[idx as usize] += 1;
+        }
     }
     println!("{:?}", diagram);
     ""
