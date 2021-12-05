@@ -1,9 +1,7 @@
-use std::ops::Add;
-
 fn main() {
     println!("Advent of Code: Day 5");
 
-    create_diagram("");
+    count_vents("");
 }
 
 fn str_to_int(s: &str) -> Result<u16, std::num::ParseIntError> {
@@ -34,7 +32,7 @@ fn parse_coord(input: &str) -> Point {
     }
 }
 
-fn create_diagram(input: &str) -> String {
+fn count_vents(input: &str) -> i32 {
     let vents = parse_vents(input);
     let dimensions = calc_diagram_dimensions(&vents);
     println!("{:?}", dimensions);
@@ -42,24 +40,35 @@ fn create_diagram(input: &str) -> String {
     let mut diagram = vec![0; dimensions.0 * dimensions.1];
 
     for vent in vents {
-        for point in vec![vent.start, vent.end] {
-            let idx = point.x * dimensions.0 as u16 + point.y;
-            println!("{}", idx);
-            diagram[idx as usize] += 1;
+        let idx = vent.start.x * dimensions.0 as u16 + vent.start.y;
+        diagram[idx as usize] += 1;
+        let idx = vent.end.x * dimensions.0 as u16 + vent.end.y;
+        diagram[idx as usize] += 1;
+
+        if vent.start.x == vent.end.x {
+            for y in vent.start.y..vent.end.y {
+                let idx = vent.start.x * dimensions.0 as u16 + y;
+                diagram[idx as usize] += 1;
+            }
+        }
+
+        if vent.start.y == vent.end.y {
+            for x in vent.start.x..vent.end.x {
+                let idx = x * dimensions.0 as u16 + vent.start.y;
+                diagram[idx as usize] += 1;
+            }
         }
     }
     println!("{:?}", diagram);
 
-    // str output
-    let output = "".to_string();
+    let mut count = 0;
     for val in diagram {
-        let char = match val {
-            0 => ".".to_string(),
-            v => v.to_string(),
-        };
-        output.add(&char);
+        if val >= 2 {
+            count += 1;
+        }
     }
-    output
+
+    count
 }
 
 fn calc_diagram_dimensions(vents: &[Vent]) -> (usize, usize) {
@@ -133,18 +142,8 @@ mod tests {
             0,0 -> 8,8
             5,5 -> 8,2
         ";
-        let diagram = ".......1..
-            ..1....1..
-            ..1....1..
-            .......1..
-            .112111211
-            ..........
-            ..........
-            ..........
-            ..........
-            222111....";
-        let output = create_diagram(input);
+        let output = count_vents(input);
 
-        assert!(output == diagram);
+        assert_eq!(output, 5);
     }
 }
