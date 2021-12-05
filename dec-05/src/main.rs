@@ -15,7 +15,7 @@ struct Point {
 }
 
 #[derive(Debug)]
-struct Line {
+struct Vent {
     start: Point,
     end: Point,
 }
@@ -33,21 +33,31 @@ fn parse_coord(input: &str) -> Point {
 }
 
 fn create_diagram(input: &str) -> &str {
+    let vents = parse_vents(input);
+
+    ""
+}
+
+fn parse_vents(input: &str) -> Vec<Vent> {
+    let mut vents: Vec<Vent> = vec![];
+
     for line in input.trim().lines() {
         let coords = line.split(" -> ").collect::<Vec<&str>>();
         if coords.is_empty() {
-            return "";
+            continue;
         }
 
         let start = parse_coord(coords[0]);
         let end = parse_coord(coords[1]);
 
-        let line = Line { start, end };
+        let vent = Vent { start, end };
 
-        println!("{:?}", line);
+        println!("{:?}", vent);
+
+        vents.push(vent);
     }
 
-    ""
+    vents
 }
 
 #[cfg(test)]
