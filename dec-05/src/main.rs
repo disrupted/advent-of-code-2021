@@ -544,20 +544,19 @@ fn count_vents(input: &str) -> i32 {
     let mut diagram = vec![0; dimensions.0 * dimensions.1];
 
     for vent in vents {
-        let idx = vent.start.x * dimensions.0 as u32 + vent.start.y;
-        diagram[idx as usize] += 1;
-        let idx = vent.end.x * dimensions.0 as u32 + vent.end.y;
-        diagram[idx as usize] += 1;
-
         if vent.start.x == vent.end.x {
-            for y in vent.start.y..vent.end.y {
+            let r = get_range(vent.start.y, vent.end.y);
+            for y in r {
                 let idx = vent.start.x * dimensions.0 as u32 + y;
                 diagram[idx as usize] += 1;
             }
         }
 
         if vent.start.y == vent.end.y {
-            for x in vent.start.x..vent.end.x {
+            println!("{:?}", vent);
+            let r = get_range(vent.start.x, vent.end.x);
+            for x in r {
+                println!("{}", x);
                 let idx = x * dimensions.0 as u32 + vent.start.y;
                 diagram[idx as usize] += 1;
             }
@@ -573,6 +572,14 @@ fn count_vents(input: &str) -> i32 {
     }
 
     count
+}
+
+fn get_range(start: u32, end: u32) -> std::ops::RangeInclusive<u32> {
+    if start < end {
+        start..=end
+    } else {
+        end..=start
+    }
 }
 
 fn calc_diagram_dimensions(vents: &[Vent]) -> (usize, usize) {
