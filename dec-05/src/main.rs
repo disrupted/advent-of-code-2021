@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 fn main() {
     println!("Advent of Code: Day 5");
 
@@ -32,7 +34,7 @@ fn parse_coord(input: &str) -> Point {
     }
 }
 
-fn create_diagram(input: &str) -> &str {
+fn create_diagram(input: &str) -> String {
     let vents = parse_vents(input);
     let dimensions = calc_diagram_dimensions(&vents);
     println!("{:?}", dimensions);
@@ -47,7 +49,17 @@ fn create_diagram(input: &str) -> &str {
         }
     }
     println!("{:?}", diagram);
-    ""
+
+    // str output
+    let output = "".to_string();
+    for val in diagram {
+        let char = match val {
+            0 => ".".to_string(),
+            v => v.to_string(),
+        };
+        output.add(&char);
+    }
+    output
 }
 
 fn calc_diagram_dimensions(vents: &[Vent]) -> (usize, usize) {
