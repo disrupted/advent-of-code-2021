@@ -34,32 +34,40 @@ fn parse_coord(input: &str) -> Point {
 
 fn create_diagram(input: &str) -> &str {
     let vents = parse_vents(input);
-    let dimensions = calc_diagram_dimensions(vents);
+    let dimensions = calc_diagram_dimensions(&vents);
     println!("{:?}", dimensions);
 
+    let mut diagram = vec![0; dimensions.0 * dimensions.1];
+
+    for vent in vents {
+        let idx = vent.start.x * dimensions.0 as u16 + vent.start.y;
+        println!("{}", idx);
+        diagram[idx as usize] = 1;
+    }
+    println!("{:?}", diagram);
     ""
 }
 
-fn calc_diagram_dimensions(vents: Vec<Vent>) -> (u16, u16) {
-    let mut x_max = 0;
-    let mut y_max = 0;
+fn calc_diagram_dimensions(vents: &[Vent]) -> (usize, usize) {
+    let mut width = 0;
+    let mut height = 0;
 
     for vent in vents {
-        if vent.start.x > x_max {
-            x_max = vent.start.x;
+        if vent.start.x > width {
+            width = vent.start.x;
         }
-        if vent.end.x > x_max {
-            x_max = vent.end.x;
+        if vent.end.x > width {
+            width = vent.end.x;
         }
-        if vent.start.y > y_max {
-            y_max = vent.start.y;
+        if vent.start.y > height {
+            height = vent.start.y;
         }
-        if vent.end.y > y_max {
-            y_max = vent.end.y;
+        if vent.end.y > height {
+            height = vent.end.y;
         }
     }
 
-    (x_max, y_max)
+    ((width + 1).into(), (height + 1).into())
 }
 
 fn parse_vents(input: &str) -> Vec<Vent> {
@@ -87,6 +95,15 @@ fn parse_vents(input: &str) -> Vec<Vent> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_dimensions() {
+        let vents = vec![Vent {
+            start: Point { x: 0, y: 0 },
+            end: Point { x: 3, y: 3 },
+        }];
+        assert!(calc_diagram_dimensions(&vents) == (4, 4));
+    }
 
     #[test]
     fn test() {
