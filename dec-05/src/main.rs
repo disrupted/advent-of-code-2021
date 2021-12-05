@@ -34,8 +34,32 @@ fn parse_coord(input: &str) -> Point {
 
 fn create_diagram(input: &str) -> &str {
     let vents = parse_vents(input);
+    let dimensions = calc_diagram_dimensions(vents);
+    println!("{:?}", dimensions);
 
     ""
+}
+
+fn calc_diagram_dimensions(vents: Vec<Vent>) -> (u16, u16) {
+    let mut x_max = 0;
+    let mut y_max = 0;
+
+    for vent in vents {
+        if vent.start.x > x_max {
+            x_max = vent.start.x;
+        }
+        if vent.end.x > x_max {
+            x_max = vent.end.x;
+        }
+        if vent.start.y > y_max {
+            y_max = vent.start.y;
+        }
+        if vent.end.y > y_max {
+            y_max = vent.end.y;
+        }
+    }
+
+    (x_max, y_max)
 }
 
 fn parse_vents(input: &str) -> Vec<Vent> {
