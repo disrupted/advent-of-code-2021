@@ -1,5 +1,10 @@
+mod data;
+
 fn main() {
     println!("Advent of Code: Day 9");
+
+    let result = find_low_points(data::DATA);
+    println!("{}", result);
 }
 
 fn find_low_points(data: &str) -> u32 {
