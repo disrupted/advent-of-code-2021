@@ -21,10 +21,11 @@ fn find_low_points(data: &str) -> u32 {
     for y in 0..heights.len() {
         for x in 0..heights[y].len() {
             let current = heights[y][x];
+            // check if current point is lower than surrounding points
             if (y == 0 || current < heights[y - 1][x]) // up
             && (x == 0 || current < heights[y][x - 1]) // left
-            && (x + 1 < heights[y].len() && current < heights[y][x + 1]) // right
-            && (y + 1 < heights.len() && current < heights[y + 1][x])
+            && (x + 1 == heights[y].len() || current < heights[y][x + 1]) // right
+            && (y + 1 == heights.len() || current < heights[y + 1][x])
             // down
             {
                 println!("{}", current);
