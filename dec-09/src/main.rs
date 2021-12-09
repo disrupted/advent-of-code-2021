@@ -15,7 +15,24 @@ fn find_low_points(data: &str) -> u32 {
         .collect();
 
     println!("{:?}", heights);
-    0
+
+    let mut risk_level = 0;
+
+    for y in 0..heights.len() {
+        for x in 0..heights[y].len() {
+            let current = heights[y][x];
+            if (y == 0 || current < heights[y - 1][x]) // up
+            && (x == 0 || current < heights[y][x - 1]) // left
+            && (x + 1 < heights[y].len() && current < heights[y][x + 1]) // right
+            && (y + 1 < heights.len() && current < heights[y + 1][x])
+            // down
+            {
+                println!("{}", current);
+                risk_level += 1 + current;
+            }
+        }
+    }
+    risk_level
 }
 
 #[cfg(test)]
