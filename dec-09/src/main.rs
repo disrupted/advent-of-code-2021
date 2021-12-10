@@ -8,6 +8,7 @@ fn main() {
     println!("result 1 {}", result1);
 }
 
+#[derive(Clone)]
 struct Floor {
     heights: Vec<Vec<u8>>,
 }
@@ -104,29 +105,29 @@ fn calc_risk(floor: &Floor) -> u32 {
         .sum()
 }
 
-fn find_basins(mut floor: Floor) -> u32 {
-    let mut basins: Vec<u32> = Vec::new();
+fn find_basins(floor: Floor) -> u32 {
+    let mut basins = find_low_points(&floor)
+        .iter()
+        .map(|pos| {
+            // floor.set_visited(pos);
+            calc_basin_size(floor.clone(), pos, 0)
+        })
+        .collect::<Vec<u32>>();
 
-    for y in 0..floor.height() {
-        for x in 0..floor.width() {
-            let pos = Point { x, y };
-            floor.set_visited(&pos);
-
-            let basin_size = calc_basin_size(&floor, &pos, 0);
-            basins.push(basin_size);
-        }
-    }
-    // basins.sort_by(|a, b| b.cmp(a))
-    println!("{:?}", basins);
-    0
+    basins.sort_by(|a, b| b.cmp(a));
+    basins.iter().take(3).product()
 }
 
-fn calc_basin_size(floor: &Floor, pos: &Point, mut basin_size: u32) -> u32 {
+fn calc_basin_size(mut floor: Floor, pos: &Point, mut basin_size: u32) -> u32 {
+    floor.set_visited(pos);
+
     pos.find_adjacent()
         .iter()
         .filter(|adj| floor.get_height(adj).unwrap_or(u8::MAX) < 9)
         .for_each(|adj| {
-            basin_size += 1 + calc_basin_size(floor, adj, basin_size);
+            if floor.get_height(adj).unwrap_or(u8::MAX) < 9 {
+                basin_size += 1 + calc_basin_size(floor.clone(), adj, basin_size);
+            }
         });
 
     basin_size
