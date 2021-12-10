@@ -3,11 +3,11 @@ mod data;
 fn main() {
     println!("Advent of Code: Day 10");
 
-    // let result = solve(data::DATA);
-    // println!("{}", result);
+    let result1 = solve1(data::DATA);
+    println!("result 1: {}", result1);
 }
 
-fn solve_1(data: &str) -> u32 {
+fn solve1(data: &str) -> u32 {
     data.trim()
         .lines()
         .map(find_illegal_char)
@@ -71,7 +71,7 @@ mod tests {
     }
 
     #[test]
-    fn test_solve_1() {
+    fn test_solve1() {
         const TEST_DATA: &str = "
             [({(<(())[]>[[{[]{<()<>>
             [(()[<>])]({[<{<<[]>>(
@@ -84,6 +84,6 @@ mod tests {
             <{([([[(<>()){}]>(<<{{
             <{([{{}}[<[[[<>{}]]]>[]]
         ";
-        assert_eq!(solve(TEST_DATA), 26397);
+        assert_eq!(solve1(TEST_DATA), 26397);
     }
 }
