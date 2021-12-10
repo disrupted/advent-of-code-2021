@@ -148,6 +148,10 @@ mod tests {
     fn test_complete() {
         assert_eq!(complete("("), ")");
         assert_eq!(complete("[({(<(())[]>[[{[]{<()<>>"), "}}]])})]");
+        assert_eq!(complete("[(()[<>])]({[<{<<[]>>("), ")}>]})");
+        assert_eq!(complete("(((({<>}<{<{<>}{[]{[]{}"), "}}>}>))))");
+        assert_eq!(complete("{<[[]]>}<{[{[{[]{()[[[]"), "]]}}]}]}>");
+        assert_eq!(complete("<{([{{}}[<[[[<>{}]]]>[]]"), "])}>");
     }
 
     #[test]
