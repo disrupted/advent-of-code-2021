@@ -3,7 +3,8 @@ mod data;
 fn main() {
     println!("Advent of Code: Day 9");
 
-    let result1 = find_low_points(data::DATA);
+    let floor = Floor::new(data::DATA);
+    let result1 = find_low_points(&floor);
     println!("result 1 {}", result1);
 }
 
@@ -12,6 +13,21 @@ struct Floor {
 }
 
 impl Floor {
+    fn new(input: &str) -> Self {
+        Self {
+            heights: input
+                .trim()
+                .lines()
+                .map(|line| {
+                    line.trim()
+                        .chars()
+                        .map(|c| c.to_digit(10).unwrap() as u8)
+                        .collect()
+                })
+                .collect(),
+        }
+    }
+
     fn height(&self) -> isize {
         self.heights.len() as isize
     }
@@ -60,20 +76,7 @@ impl Point {
     }
 }
 
-fn find_low_points(data: &str) -> u32 {
-    let floor = Floor {
-        heights: data
-            .trim()
-            .lines()
-            .map(|line| {
-                line.trim()
-                    .chars()
-                    .map(|c| c.to_digit(10).unwrap() as u8)
-                    .collect()
-            })
-            .collect(),
-    };
-
+fn find_low_points(floor: &Floor) -> u32 {
     let mut risk_level: u32 = 0;
 
     for y in 0..floor.height() {
@@ -107,6 +110,7 @@ mod tests {
             8767896789
             9899965678
         ";
-        assert_eq!(find_low_points(TEST_DATA), 15);
+        let floor = Floor::new(TEST_DATA);
+        assert_eq!(find_low_points(&floor), 15);
     }
 }
