@@ -4,7 +4,7 @@ fn main() {
     println!("Advent of Code: Day 9");
 
     let floor = Floor::new(data::DATA);
-    let result1 = find_low_points(&floor);
+    let result1 = calc_risk(&floor);
     println!("result 1 {}", result1);
 }
 
@@ -80,25 +80,28 @@ impl Point {
     }
 }
 
-fn find_low_points(floor: &Floor) -> u32 {
-    let mut risk_level: u32 = 0;
+fn find_low_points(floor: &Floor) -> Vec<Point> {
+    let mut low_points = Vec::new();
 
     for y in 0..floor.height() {
         for x in 0..floor.width() {
             let pos = Point { x, y };
             let height = floor.get_height(&pos).unwrap();
 
-            if pos
-                .find_adjacent()
+            pos.find_adjacent()
                 .iter()
                 .all(|adj| floor.get_height(adj).unwrap_or(u8::MAX) > height)
-            {
-                println!("{}", height);
-                risk_level += 1 + height as u32;
-            }
+                .then(|| low_points.push(pos));
         }
     }
-    risk_level
+    low_points
+}
+
+fn calc_risk(floor: &Floor) -> u32 {
+    find_low_points(floor)
+        .iter()
+        .map(|p| floor.get_height(p).unwrap() as u32 + 1)
+        .sum()
 }
 
 fn find_basins(mut floor: Floor) -> u32 {
@@ -144,7 +147,7 @@ mod tests {
             9899965678
         ";
         let floor = Floor::new(TEST_DATA);
-        assert_eq!(find_low_points(&floor), 15);
+        assert_eq!(calc_risk(&floor), 15);
     }
 
     // PART 2
