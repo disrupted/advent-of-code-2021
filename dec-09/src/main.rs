@@ -8,20 +8,18 @@ fn main() {
 }
 
 fn find_low_points(data: &str) -> u32 {
-    let heights: Vec<Vec<u32>> = data
+    let heights: Vec<Vec<u8>> = data
         .trim()
         .lines()
         .map(|line| {
             line.trim()
                 .chars()
-                .map(|c| c.to_digit(10).unwrap())
+                .map(|c| c.to_digit(10).unwrap() as u8)
                 .collect()
         })
         .collect();
 
-    println!("{:?}", heights);
-
-    let mut risk_level = 0;
+    let mut risk_level: u32 = 0;
 
     for y in 0..heights.len() {
         for x in 0..heights[y].len() {
@@ -33,8 +31,7 @@ fn find_low_points(data: &str) -> u32 {
             && (y + 1 == heights.len() || current < heights[y + 1][x])
             // down
             {
-                println!("{}", current);
-                risk_level += 1 + current;
+                risk_level += 1 + current as u32;
             }
         }
     }
