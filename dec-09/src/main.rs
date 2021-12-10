@@ -3,9 +3,12 @@ mod data;
 fn main() {
     println!("Advent of Code: Day 9");
 
-    let floor = Floor::new(data::DATA);
+    let mut floor = Floor::new(data::DATA);
     let result1 = calc_risk(&floor);
     println!("result 1 {}", result1);
+
+    let result2 = calc_basins(&mut floor);
+    println!("result 2 {}", result2);
 }
 
 struct Floor {
@@ -104,7 +107,7 @@ fn calc_risk(floor: &Floor) -> u32 {
         .sum()
 }
 
-fn find_basins(floor: &mut Floor) -> u32 {
+fn calc_basins(floor: &mut Floor) -> u32 {
     let mut basins = find_low_points(floor)
         .iter()
         .map(|pos| calc_basin_size(floor, pos))
@@ -156,6 +159,6 @@ mod tests {
             9899965678
         ";
         let mut floor = Floor::new(TEST_DATA);
-        assert_eq!(find_basins(&mut floor), 1134);
+        assert_eq!(calc_basins(&mut floor), 1134);
     }
 }
