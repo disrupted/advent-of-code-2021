@@ -118,14 +118,11 @@ fn calc_basin_size(floor: &mut Floor, pos: &Point) -> u32 {
     floor.set_visited(pos);
     let mut basin_size = 1;
 
-    pos.find_adjacent()
-        .iter()
-        // .filter(|adj| floor.get_height(adj).unwrap_or(u8::MAX) < 9)
-        .for_each(|adj| {
-            if floor.get_height(adj).unwrap_or(u8::MAX) < 9 {
-                basin_size += calc_basin_size(floor, adj);
-            }
-        });
+    pos.find_adjacent().iter().for_each(|adj| {
+        if floor.get_height(adj).unwrap_or(u8::MAX) < 9 {
+            basin_size += calc_basin_size(floor, adj);
+        }
+    });
 
     basin_size
 }
