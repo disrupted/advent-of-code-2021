@@ -8,7 +8,6 @@ fn main() {
     println!("result 1 {}", result1);
 }
 
-#[derive(Clone)]
 struct Floor {
     heights: Vec<Vec<u8>>,
 }
@@ -49,16 +48,9 @@ impl Floor {
     }
 }
 
-#[derive(Clone, Copy)]
 struct Point {
     x: isize,
     y: isize,
-}
-
-impl PartialEq for Point {
-    fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y
-    }
 }
 
 impl Point {
