@@ -5,6 +5,9 @@ fn main() {
 
     let result1 = solve1(data::DATA);
     println!("result 1: {}", result1);
+
+    let result2 = solve2(data::DATA);
+    println!("result 2: {}", result2);
 }
 
 fn solve1(data: &str) -> u32 {
@@ -35,8 +38,8 @@ fn calculate_completion_char_score(c: char) -> u8 {
     }
 }
 
-fn solve2(data: &str) -> u32 {
-    let mut scores: Vec<u32> = data
+fn solve2(data: &str) -> u64 {
+    let mut scores: Vec<u64> = data
         .trim()
         .lines()
         .filter_map(complete)
@@ -47,11 +50,11 @@ fn solve2(data: &str) -> u32 {
     scores.select_nth_unstable(middle).1.to_owned()
 }
 
-fn calculate_completion_score(completion: &str) -> u32 {
-    let mut score: u32 = 0;
+fn calculate_completion_score(completion: &str) -> u64 {
+    let mut score: u64 = 0;
     completion
         .chars()
-        .for_each(|c| score = score * 5 + calculate_completion_char_score(c) as u32);
+        .for_each(|c| score = score * 5 + calculate_completion_char_score(c) as u64);
     score
 }
 
