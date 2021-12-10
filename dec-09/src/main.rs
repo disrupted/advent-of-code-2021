@@ -107,23 +107,23 @@ fn calc_risk(floor: &Floor) -> u32 {
 fn find_basins(floor: &mut Floor) -> u32 {
     let mut basins = find_low_points(floor)
         .iter()
-        .map(|pos| calc_basin_size(floor, pos, 0))
+        .map(|pos| calc_basin_size(floor, pos))
         .collect::<Vec<u32>>();
 
     basins.sort_by(|a, b| b.cmp(a));
     basins.iter().take(3).product()
 }
 
-fn calc_basin_size(floor: &mut Floor, pos: &Point, mut basin_size: u32) -> u32 {
+fn calc_basin_size(floor: &mut Floor, pos: &Point) -> u32 {
     floor.set_visited(pos);
-    basin_size += 1;
+    let mut basin_size = 1;
 
     pos.find_adjacent()
         .iter()
         // .filter(|adj| floor.get_height(adj).unwrap_or(u8::MAX) < 9)
         .for_each(|adj| {
             if floor.get_height(adj).unwrap_or(u8::MAX) < 9 {
-                basin_size += calc_basin_size(floor, adj, 0);
+                basin_size += calc_basin_size(floor, adj);
             }
         });
 
