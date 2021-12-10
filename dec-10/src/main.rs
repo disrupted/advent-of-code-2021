@@ -39,7 +39,7 @@ fn solve2(data: &str) -> u32 {
     let mut scores: Vec<u32> = data
         .trim()
         .lines()
-        .map(complete)
+        .filter_map(complete)
         .map(|s| calculate_completion_score(&s))
         .collect();
 
@@ -93,14 +93,14 @@ fn find_illegal_char(s: &str) -> Option<char> {
     None
 }
 
-fn complete(s: &str) -> String {
+fn complete(s: &str) -> Option<String> {
     let mut stack: Vec<char> = vec![];
 
     for c in s.chars() {
         match c {
             ')' | ']' | '}' | '>' => {
                 if stack.pop() != get_matching_paren(c) {
-                    return "".to_string();
+                    return None;
                 }
             }
             _ => stack.push(c),
@@ -110,10 +110,11 @@ fn complete(s: &str) -> String {
     // completion
     let mut completion = "".to_string();
     while let Some(c) = stack.pop() {
-        let s = get_matching_paren(c).unwrap();
-        completion.push(s);
+        if let Some(s) = get_matching_paren(c) {
+            completion.push(s)
+        };
     }
-    completion
+    Some(completion)
 }
 
 #[cfg(test)]
@@ -146,12 +147,12 @@ mod tests {
 
     #[test]
     fn test_complete() {
-        assert_eq!(complete("("), ")");
-        assert_eq!(complete("[({(<(())[]>[[{[]{<()<>>"), "}}]])})]");
-        assert_eq!(complete("[(()[<>])]({[<{<<[]>>("), ")}>]})");
-        assert_eq!(complete("(((({<>}<{<{<>}{[]{[]{}"), "}}>}>))))");
-        assert_eq!(complete("{<[[]]>}<{[{[{[]{()[[[]"), "]]}}]}]}>");
-        assert_eq!(complete("<{([{{}}[<[[[<>{}]]]>[]]"), "])}>");
+        assert_eq!(complete("(").unwrap(), ")");
+        assert_eq!(complete("[({(<(())[]>[[{[]{<()<>>").unwrap(), "}}]])})]");
+        assert_eq!(complete("[(()[<>])]({[<{<<[]>>(").unwrap(), ")}>]})");
+        assert_eq!(complete("(((({<>}<{<{<>}{[]{[]{}").unwrap(), "}}>}>))))");
+        assert_eq!(complete("{<[[]]>}<{[{[{[]{()[[[]").unwrap(), "]]}}]}]}>");
+        assert_eq!(complete("<{([{{}}[<[[[<>{}]]]>[]]").unwrap(), "])}>");
     }
 
     #[test]
