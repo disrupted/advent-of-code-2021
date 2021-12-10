@@ -1,4 +1,5 @@
 mod data;
+use stats::median;
 
 fn main() {
     println!("Advent of Code: Day 10");
@@ -11,8 +12,46 @@ fn solve1(data: &str) -> u32 {
     data.trim()
         .lines()
         .map(find_illegal_char)
-        .map(calculate_score)
+        .map(calculate_error_char_score)
         .sum()
+}
+
+fn calculate_error_char_score(c: Option<char>) -> u32 {
+    match c {
+        Some(')') => 3,
+        Some(']') => 57,
+        Some('}') => 1197,
+        Some('>') => 25137,
+        _ => 0,
+    }
+}
+
+fn calculate_completion_char_score(c: char) -> u8 {
+    match c {
+        ')' => 1,
+        ']' => 2,
+        '}' => 3,
+        '>' => 4,
+        _ => 0,
+    }
+}
+
+fn solve2(data: &str) -> u32 {
+    stats::median(
+        data.trim()
+            .lines()
+            .map(complete)
+            .map(|s| calculate_completion_score(&s)),
+    )
+    .unwrap_or(0.0) as u32
+}
+
+fn calculate_completion_score(completion: &str) -> u32 {
+    let mut score: u32 = 0;
+    completion
+        .chars()
+        .for_each(|c| score = score * 5 + calculate_completion_char_score(c) as u32);
+    score
 }
 
 fn get_matching_paren(c: char) -> Option<char> {
@@ -21,6 +60,10 @@ fn get_matching_paren(c: char) -> Option<char> {
         ']' => Some('['),
         '}' => Some('{'),
         '>' => Some('<'),
+        '(' => Some(')'),
+        '[' => Some(']'),
+        '{' => Some('}'),
+        '<' => Some('>'),
         _ => None,
     }
 }
@@ -49,14 +92,30 @@ fn find_illegal_char(s: &str) -> Option<char> {
     None
 }
 
-fn calculate_score(c: Option<char>) -> u32 {
-    match c {
-        Some(')') => 3,
-        Some(']') => 57,
-        Some('}') => 1197,
-        Some('>') => 25137,
-        _ => 0,
+fn complete(s: &str) -> String {
+    let mut stack: Vec<char> = vec![];
+
+    for c in s.chars() {
+        match c {
+            ')' | ']' | '}' | '>' => {
+                if stack.pop() != get_matching_paren(c) {
+                    break;
+                }
+            }
+            _ => stack.push(c),
+        };
     }
+
+    // completion
+    let mut completion = "".to_string();
+    while let c = stack.pop() {
+        if c.is_none() {
+            continue;
+        }
+        let s = get_matching_paren(c.unwrap()).unwrap();
+        completion.push(s);
+    }
+    completion
 }
 
 #[cfg(test)]
@@ -85,5 +144,37 @@ mod tests {
             <{([{{}}[<[[[<>{}]]]>[]]
         ";
         assert_eq!(solve1(TEST_DATA), 26397);
+    }
+
+    #[test]
+    fn test_complete() {
+        assert_eq!(complete("("), ")");
+        assert_eq!(complete("[({(<(())[]>[[{[]{<()<>>"), "}}]])})]");
+    }
+
+    #[test]
+    fn test_calculate_completion_score() {
+        assert_eq!(calculate_completion_score("}}]])})]"), 288957);
+        assert_eq!(calculate_completion_score(")}>]})"), 5566);
+        assert_eq!(calculate_completion_score("}}>}>))))"), 1480781);
+        assert_eq!(calculate_completion_score("]]}}]}]}>"), 995444);
+        assert_eq!(calculate_completion_score("])}>"), 294);
+    }
+
+    #[test]
+    fn test_solve2() {
+        const TEST_DATA: &str = "
+            [({(<(())[]>[[{[]{<()<>>
+            [(()[<>])]({[<{<<[]>>(
+            {([(<{}[<>[]}>{[]{[(<()>
+            (((({<>}<{<{<>}{[]{[]{}
+            [[<[([]))<([[{}[[()]]]
+            [{[{({}]{}}([{[{{{}}([]
+            {<[[]]>}<{[{[{[]{()[[[]
+            [<(<(<(<{}))><([]([]()
+            <{([([[(<>()){}]>(<<{{
+            <{([{{}}[<[[[<>{}]]]>[]]
+        ";
+        assert_eq!(solve2(TEST_DATA), 288957);
     }
 }
