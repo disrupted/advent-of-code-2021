@@ -1,5 +1,4 @@
 mod data;
-use stats::median;
 
 fn main() {
     println!("Advent of Code: Day 10");
@@ -37,13 +36,15 @@ fn calculate_completion_char_score(c: char) -> u8 {
 }
 
 fn solve2(data: &str) -> u32 {
-    stats::median(
-        data.trim()
-            .lines()
-            .map(complete)
-            .map(|s| calculate_completion_score(&s)),
-    )
-    .unwrap_or(0.0) as u32
+    let mut scores: Vec<u32> = data
+        .trim()
+        .lines()
+        .map(complete)
+        .map(|s| calculate_completion_score(&s))
+        .collect();
+
+    let middle = scores.len() / 2;
+    scores.select_nth_unstable(middle).1.to_owned()
 }
 
 fn calculate_completion_score(completion: &str) -> u32 {
@@ -99,7 +100,7 @@ fn complete(s: &str) -> String {
         match c {
             ')' | ']' | '}' | '>' => {
                 if stack.pop() != get_matching_paren(c) {
-                    break;
+                    return "".to_string();
                 }
             }
             _ => stack.push(c),
@@ -108,11 +109,8 @@ fn complete(s: &str) -> String {
 
     // completion
     let mut completion = "".to_string();
-    while let c = stack.pop() {
-        if c.is_none() {
-            continue;
-        }
-        let s = get_matching_paren(c.unwrap()).unwrap();
+    while let Some(c) = stack.pop() {
+        let s = get_matching_paren(c).unwrap();
         completion.push(s);
     }
     completion
