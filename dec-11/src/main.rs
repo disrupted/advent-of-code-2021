@@ -1,14 +1,18 @@
 mod data;
+use itertools::{Itertools, Position};
 
 fn main() {
     println!("Advent of Code: Day 11");
 
     let map = Map::new(data::DATA);
-    let result1 = solve1(map);
+    let result1 = solve1(map.clone());
     println!("result 1 {}", result1);
+
+    let result2 = solve2(map);
+    println!("result 2 {}", result2);
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Map {
     pub octos: Vec<Vec<i8>>,
 }
@@ -138,7 +142,6 @@ impl Point {
 
 fn solve1(mut map: Map) -> u32 {
     println!("before\n{:?}", map);
-    // let mut stack: Vec<Point> = Vec::new();
     let mut flashes: u32 = 0;
 
     for i in 1..=100 {
@@ -155,6 +158,34 @@ fn solve1(mut map: Map) -> u32 {
     }
 
     flashes
+}
+
+fn solve2(mut map: Map) -> i32 {
+    println!("before\n{:?}", map);
+    let mut flashes: u32 = 0;
+
+    for i in 1..=1000 {
+        for y in 0..map.height() {
+            for x in 0..map.width() {
+                let pos = Point { x, y };
+                if map.get(&pos) >= 0 {
+                    flashes += map.increase(&pos);
+                }
+            }
+        }
+        map.reset_flashed();
+        println!("stage {}\n{:?}", i, map);
+
+        let all = (0..map.height())
+            .cartesian_product(0..map.width())
+            .map(|(y, x)| Point { x, y })
+            .all(|pos| map.get(&pos) == 0);
+        // HACK: why does `.then(|| i)` not work here?
+        if all {
+            return i;
+        }
+    }
+    0
 }
 
 #[cfg(test)]
@@ -178,5 +209,24 @@ mod tests {
         ";
         let map = Map::new(TEST_DATA);
         assert_eq!(solve1(map), 1656);
+    }
+
+    // PART 2
+    #[test]
+    fn test_solve2() {
+        const TEST_DATA: &str = "
+            5483143223
+            2745854711
+            5264556173
+            6141336146
+            6357385478
+            4167524645
+            2176841721
+            6882881134
+            4846848554
+            5283751526
+        ";
+        let map = Map::new(TEST_DATA);
+        assert_eq!(solve2(map), 195);
     }
 }
