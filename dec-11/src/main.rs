@@ -4,13 +4,13 @@ fn main() {
     println!("Advent of Code: Day 11");
 
     let mut map = Map::new(data::DATA);
-    let result1 = solve1(&map);
+    let result1 = solve1(map);
     println!("result 1 {}", result1);
 }
 
 #[derive(Debug)]
 struct Map {
-    octos: Vec<Vec<u8>>,
+    pub octos: Vec<Vec<i8>>,
 }
 
 impl Map {
@@ -22,7 +22,7 @@ impl Map {
                 .map(|line| {
                     line.trim()
                         .chars()
-                        .map(|c| c.to_digit(10).unwrap() as u8)
+                        .map(|c| c.to_digit(10).unwrap() as i8)
                         .collect()
                 })
                 .collect(),
@@ -36,6 +36,32 @@ impl Map {
     fn width(&self) -> isize {
         self.octos[0].len() as isize
     }
+
+    fn get(&self, pos: &Point) -> i8 {
+        if pos.is_within(self) {
+            return self.octos[pos.y as usize][pos.x as usize];
+        }
+        i8::MIN
+    }
+
+    fn increase(&mut self, pos: &Point) -> bool {
+        self.octos[pos.y as usize][pos.x as usize] += 1;
+
+        // check if flashing
+        if self.get(pos) == 10 {
+            self.set_flashed(pos);
+            return true;
+        }
+        false
+    }
+
+    fn set_flashed(&mut self, pos: &Point) {
+        self.octos[pos.y as usize][pos.x as usize] = -1;
+    }
+
+    fn reset(&mut self, pos: &Point) {
+        self.octos[pos.y as usize][pos.x as usize] = 0;
+    }
 }
 
 // struct Octo {
@@ -43,9 +69,16 @@ impl Map {
 //     pos: Point,
 // }
 
+#[derive(Clone)]
 struct Point {
     x: isize,
     y: isize,
+}
+
+impl PartialEq for Point {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
 }
 
 impl Point {
@@ -104,9 +137,27 @@ impl Point {
     // }
 }
 
-fn solve1(map: &Map) -> u32 {
-    println!("{:?}", map);
-    panic!()
+fn solve1(mut map: Map) -> u32 {
+    let mut stack: Vec<Point> = Vec::new();
+    let mut flashes: u32 = 0;
+
+    for i in 0..=100 {
+        println!("stage {}\n{:?}", i, map);
+        for y in 0..map.height() {
+            for x in 0..map.width() {
+                let pos = Point { x, y };
+
+                for pos in pos.find_adjacent() {
+                    // if !stack.contains(&pos) {
+                    if map.get(&pos) >= 0 && map.increase(&pos) {
+                        flashes += 1;
+                    }
+                }
+            }
+        }
+    }
+
+    flashes
 }
 
 #[cfg(test)]
@@ -129,6 +180,6 @@ mod tests {
             5283751526
         ";
         let map = Map::new(TEST_DATA);
-        assert_eq!(solve1(&map), 1656);
+        assert_eq!(solve1(map), 1656);
     }
 }
