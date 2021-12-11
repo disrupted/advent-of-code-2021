@@ -57,13 +57,13 @@ impl Map {
     fn set_flashed(&mut self, pos: &Point) -> u32 {
         self.octos[pos.y as usize][pos.x as usize] = -1;
 
-        let mut flashes = 0;
+        let mut flashes = 1;
         pos.find_adjacent()
             .iter()
             // .filter(|pos| pos.is_within(&self))
             .for_each(|pos| {
                 if self.get(pos) >= 0 {
-                    flashes = 1 + self.increase(pos);
+                    flashes += self.increase(pos);
                 }
             });
         flashes
