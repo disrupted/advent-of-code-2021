@@ -155,24 +155,21 @@ impl Point {
 }
 
 fn solve1(mut map: Map) -> u32 {
-    let mut stack: Vec<Point> = Vec::new();
+    println!("before\n{:?}", map);
+    // let mut stack: Vec<Point> = Vec::new();
     let mut flashes: u32 = 0;
 
-    for i in 0..=100 {
-        println!("stage {}\n{:?}", i, map);
+    for i in 1..=100 {
         for y in 0..map.height() {
             for x in 0..map.width() {
                 let pos = Point { x, y };
-
-                for pos in pos.find_adjacent() {
-                    // if !stack.contains(&pos) {
-                    if map.get(&pos) >= 0 {
-                        flashes += map.increase(&pos);
-                    }
+                if map.get(&pos) >= 0 {
+                    flashes += map.increase(&pos);
                 }
             }
         }
         map.reset_flashed();
+        println!("stage {}\n{:?}", i, map);
     }
 
     flashes
@@ -184,7 +181,7 @@ mod tests {
 
     // PART 1
     #[test]
-    fn test_find_low_points() {
+    fn test_solve1() {
         const TEST_DATA: &str = "
             5483143223
             2745854711
