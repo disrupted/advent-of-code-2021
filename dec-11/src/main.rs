@@ -57,6 +57,14 @@ impl Map {
 
     fn set_flashed(&mut self, pos: &Point) {
         self.octos[pos.y as usize][pos.x as usize] = -1;
+        pos.find_adjacent()
+            .iter()
+            // .filter(|pos| pos.is_within(&self))
+            .for_each(|pos| {
+                if self.get(pos) >= 0 {
+                    let _ = self.increase(pos);
+                }
+            });
     }
 
     fn reset_flashed(&mut self) {
