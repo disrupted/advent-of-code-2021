@@ -5,11 +5,14 @@ fn main() {
     println!("Advent of Code: Day 11");
 
     let map = Map::new(data::DATA);
-    let result1 = solve1(map);
+    let result1 = solve1(map.clone());
     println!("result 1 {}", result1);
+
+    let result2 = solve2(map);
+    println!("result 2 {}", result2);
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Map {
     pub octos: Vec<Vec<i8>>,
 }
