@@ -3,7 +3,7 @@ mod data;
 fn main() {
     println!("Advent of Code: Day 11");
 
-    let mut map = Map::new(data::DATA);
+    let map = Map::new(data::DATA);
     let result1 = solve1(map);
     println!("result 1 {}", result1);
 }
@@ -81,11 +81,6 @@ impl Map {
     }
 }
 
-// struct Octo {
-//     energy: u8,
-//     pos: Point,
-// }
-
 #[derive(Clone)]
 struct Point {
     x: isize,
@@ -139,19 +134,6 @@ impl Point {
             },
         ]
     }
-
-    // fn find_adjacent(&self) -> [(isize, isize); 8] {
-    //     [
-    //         (self.x - 1, self.y),
-    //         (self.x + 1, self.y),
-    //         (self.x, self.y - 1),
-    //         (self.x, self.y + 1),
-    //         (self.x - 1, self.y - 1),
-    //         (self.x + 1, self.y + 1),
-    //         (self.x + 1, self.y - 1),
-    //         (self.x - 1, self.y + 1),
-    //     ]
-    // }
 }
 
 fn solve1(mut map: Map) -> u32 {
