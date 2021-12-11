@@ -59,8 +59,15 @@ impl Map {
         self.octos[pos.y as usize][pos.x as usize] = -1;
     }
 
-    fn reset(&mut self, pos: &Point) {
-        self.octos[pos.y as usize][pos.x as usize] = 0;
+    fn reset_flashed(&mut self) {
+        for y in 0..self.height() {
+            for x in 0..self.width() {
+                let pos = Point { x, y };
+                if self.get(&pos) == -1 {
+                    self.octos[y as usize][x as usize] = 0;
+                }
+            }
+        }
     }
 }
 
@@ -155,6 +162,7 @@ fn solve1(mut map: Map) -> u32 {
                 }
             }
         }
+        map.reset_flashed();
     }
 
     flashes
