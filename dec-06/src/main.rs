@@ -4,8 +4,11 @@ fn main() {
     println!("Advent of Code: Day 6");
 
     let mut pop = Population::new(data::DATA.to_vec());
-    let result1 = solve(&mut pop, 80);
+    let result1 = solve(&mut pop.clone(), 80);
     println!("population after 80 days: {}", result1);
+
+    let result2 = solve(&mut pop, 256);
+    println!("population after 256 days: {}", result2);
 }
 
 const STAGE: usize = 9;
