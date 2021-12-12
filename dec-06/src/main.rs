@@ -2,6 +2,7 @@ fn main() {
     println!("Advent of Code: Day 6");
 }
 
+#[derive(Clone)]
 struct Population {
     population: Vec<u8>,
 }
@@ -25,9 +26,18 @@ impl Population {
         });
         self.population.append(&mut new_fish);
     }
+
+    fn len(&self) -> usize {
+        self.population.len()
+    }
 }
 
-// fn solve1(population: Population) -> u32 {}
+fn solve1(pop: &mut Population, steps: usize) -> usize {
+    for _ in 1..=steps {
+        pop.step();
+    }
+    pop.len()
+}
 
 #[cfg(test)]
 mod tests {
@@ -47,5 +57,12 @@ mod tests {
         assert_eq!(initial.population, [6, 0, 6, 4, 5, 6, 7, 8, 8]);
         initial.step();
         assert_eq!(initial.population, [5, 6, 5, 3, 4, 5, 6, 7, 7, 8]);
+    }
+
+    #[test]
+    fn test_solve1() {
+        let pop = Population::new(vec![3, 4, 3, 1, 2]);
+        assert_eq!(solve1(&mut pop.clone(), 18), 26);
+        assert_eq!(solve1(&mut pop.clone(), 80), 5934);
     }
 }
