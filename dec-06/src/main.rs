@@ -43,8 +43,7 @@ impl Population {
 }
 
 fn solve(pop: &mut Population, steps: usize) -> u64 {
-    for i in 1..=steps {
-        println!("step {}", i);
+    for _ in 1..=steps {
         pop.step();
     }
     pop.size()
