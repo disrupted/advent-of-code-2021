@@ -1,5 +1,11 @@
+mod data;
+
 fn main() {
     println!("Advent of Code: Day 6");
+
+    let mut pop = Population::new(data::DATA.to_vec());
+    let result1 = solve1(&mut pop, 80);
+    println!("population after 80 days: {}", result1);
 }
 
 #[derive(Clone)]
