@@ -88,4 +88,11 @@ mod tests {
         assert_eq!(solve(&mut pop.clone(), 18), 26);
         assert_eq!(solve(&mut pop, 80), 5934);
     }
+
+    // PART 2
+    #[test]
+    fn test_solve2() {
+        let mut pop = Population::new(vec![3, 4, 3, 1, 2]);
+        assert_eq!(solve(&mut pop, 256), 26984457539);
+    }
 }
